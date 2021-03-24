@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
         color: 'white'
     },
     grid: {
-        padding: theme.spacing(8),
+        padding: theme.spacing(10),
         textAlign: 'center',
         background: 'linear-gradient(to bottom, #00A3AD 40%, white 40%, white 100%)'
     }
