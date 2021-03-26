@@ -44,7 +44,7 @@ const ListLoan = (props) => {
     const {setInvestor} = props;
     
     useEffect(() => {
-        axios.get('http://demo4368463.mockable.io/loads')
+        axios.get('https://demo4368463.mockable.io/loads')
         .then( result =>{
             setListado(result.data.loads);
             cardSelect();
@@ -53,7 +53,7 @@ const ListLoan = (props) => {
 
 
     const cardSelect = (info) =>{
-        axios.get('http://demo4368463.mockable.io/investor?id=295034231455')
+        axios.get('https://demo4368463.mockable.io/investor?id=295034231455')
         .then( result =>{
             setInvestor(result.data);
 
@@ -70,7 +70,7 @@ const ListLoan = (props) => {
                                 Advance
                             </Typography>
                             <Typography className={classes.title} color="textSecondary" variant="h6" gutterBottom>
-                                Producto ID
+                                Product ID
                             </Typography>
                             <Typography className={classes.pos1} color="subtitle2">
                                 {item.Date}

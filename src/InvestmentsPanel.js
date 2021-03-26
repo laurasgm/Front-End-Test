@@ -21,6 +21,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import SaveIcon from '@material-ui/icons/Save';
 import axios from 'axios';
 import Snackbar from '@material-ui/core/Snackbar';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const BorderLinearProgress = withStyles((theme) => ({
 	root: {
@@ -179,8 +180,28 @@ const useStyles = makeStyles((theme) => ({
 			width: '25ch',
 		},
 	},
-
+	root: {
+		'& .MuiTextField-root': {
+		  margin: theme.spacing(1),
+		  width: '25ch',
+		},
+	}
 }));
+
+const lookup = [
+	{
+	  value: 0,
+	  label: 'Y combinator',
+	},
+	{
+	  value: 1,
+	  label: 'SaaStr',
+	},
+	{
+	  value: 2,
+	  label: 'IndieGo',
+	}
+  ];
 
 
 const InvestmentsPanel = (props) => {
@@ -188,6 +209,7 @@ const InvestmentsPanel = (props) => {
 	const [editionMode, setEditionMode] = useState(true);
 	const [listInvest, setListInvest] = useState([]);
 	const [open, setOpen] = useState(false);
+	const [value, setValue] = useState(0);
 	const [inputs, setInputs] = useState({
 		id: "",
 		investor: "Y Combinator",
@@ -215,8 +237,7 @@ const InvestmentsPanel = (props) => {
 	};
 
 	const saveInvestment = () => {
-		debugger;
-		axios.post('http://demo4368463.mockable.io/investment', inputs)
+		axios.post('https://demo4368463.mockable.io/investment', inputs)
         .then( result =>{
             var exitoso = result.data.msg;
 			if(exitoso == 'OK'){
@@ -231,7 +252,6 @@ const InvestmentsPanel = (props) => {
 
 	//condition for icon edit in table
 	function ActionEditRow(props) {
-		debugger;
 		const index = listInvest.findIndex(row => row == props.row);
 		if (index != -1 && index == 0) {
 			return (
@@ -258,6 +278,9 @@ const InvestmentsPanel = (props) => {
 		}
 	}
 
+	const lookupChange = (event) => {
+		setValue(event.target.value);
+	  };
 
 	return (
 		<div>
@@ -314,15 +337,19 @@ const InvestmentsPanel = (props) => {
 									<HighlightOffIcon className={classes.buttonDelete2} onClick={cancelInvestment} ></HighlightOffIcon>
 									<SaveIcon className={classes.buttonEdit2} onClick={saveInvestment}></SaveIcon>
 									<form className={classes.form} noValidate autoComplete="off">
-										<TextField
-											id="investor"
-											label="Investor"
-											InputProps={{
-												className: classes.titleEdit,
-												shrink: true,
-												startAdornment: <InputAdornment position="start"></InputAdornment>,
-											}}
-										/>
+									<TextField
+										id="investor"
+										select
+										label="Select investor"
+										value={value}
+										onChange={lookupChange}
+										>
+										{lookup.map((option) => (
+											<MenuItem key={option.value} value={option.value}>
+											{option.label}
+											</MenuItem>
+										))}
+										</TextField>
 										<TextField
 											label="Amount to sell"
 											id="amountToSell"
