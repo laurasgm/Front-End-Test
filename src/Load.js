@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     grid: {
         padding: theme.spacing(10),
         textAlign: 'center',
-        background: 'linear-gradient(to bottom, #00A3AD 40%, white 40%, white 100%)'
+        background: 'linear-gradient(to bottom, #00A3AD 35%, white 35%, white 100%)'
     }
 }));
 function Load() {

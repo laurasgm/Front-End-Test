@@ -19,6 +19,8 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SaveIcon from '@material-ui/icons/Save';
+import axios from 'axios';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const BorderLinearProgress = withStyles((theme) => ({
 	root: {
@@ -48,7 +50,7 @@ const BorderLinearProgress = withStyles((theme) => ({
 function CircularProgressWithLabel(props) {
 	return (
 		<Box position="relative" display="inline-flex">
-			<CircularProgress variant="determinate" color="#00CFC9" {...props} />
+			<CircularProgress variant="determinate" background="#00CFC9" {...props} />
 			<Box
 				top={0}
 				left={0}
@@ -96,15 +98,6 @@ const StyledTableRow = withStyles((theme) => ({
 	},
 }))(TableRow);
 
-function createData(investor, sold, purchased) {
-	return { investor, sold, purchased };
-}
-
-const rows = [
-	createData('Y Combinator', 830.800, 6.0),
-	createData('SaaStr', 830.800, 9.0),
-	createData('IndieGo', 830.800, 16.0),
-];
 
 const useStyles = makeStyles((theme) => ({
 	grid: {
@@ -125,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
 		background: '#FFFFFF',
 	},
 	table: {
-		minHeight: 350,
+		minHeight: 400,
 		maxHeight: 400
 	},
 	footer: {
@@ -151,7 +144,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 	buttonDelete: {
 		color: '#00A3AD',
-		fontSize: '30px'
+		fontSize: '30px',
+		marginLeft: '-65px'
 	},
 	buttonDelete2: {
 		color: '#00A3AD',
@@ -168,7 +162,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paperBack: {
 		background: '#FAFAFA',
-		minHeight: 300,
+		minHeight: 350,
 		maxHeight: 400
 	},
 	subText: {
@@ -189,13 +183,26 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
-
 const InvestmentsPanel = (props) => {
 	//defined mode to the panel 
 	const [editionMode, setEditionMode] = useState(true);
+	const [listInvest, setListInvest] = useState([]);
+	const [open, setOpen] = useState(false);
+	const [inputs, setInputs] = useState({
+		id: "",
+		investor: "Y Combinator",
+		amountToSell: 0,
+		leftAmount: 0,
+	  });
+	
 	const classes = useStyles();
+	const {investor} = props;
 
+	useEffect(() => {
+		if(investor.length > 0){
+			setListInvest(investor)
+		}
+	}, [investor])
 
 	//change to mode edition
 	const editInvestment = () => {
@@ -203,13 +210,29 @@ const InvestmentsPanel = (props) => {
 	};
 
 	//change to mode edition
-	const saveInvestment = () => {
+	const cancelInvestment = () => {
 		setEditionMode(true);
 	};
 
+	const saveInvestment = () => {
+		debugger;
+		axios.post('http://demo4368463.mockable.io/investment', inputs)
+        .then( result =>{
+            var exitoso = result.data.msg;
+			if(exitoso == 'OK'){
+				setOpen(true);
+			}
+        })
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	  };
+
 	//condition for icon edit in table
 	function ActionEditRow(props) {
-		const index = rows.findIndex(row => row == props.row);
+		debugger;
+		const index = listInvest.findIndex(row => row == props.row);
 		if (index != -1 && index == 0) {
 			return (
 				<div>
@@ -223,7 +246,7 @@ const InvestmentsPanel = (props) => {
 
 	//condition for icon delete in table
 	function ActionDeleteRow(props) {
-		const index = rows.findIndex(row => row == props.row);
+		const index = listInvest.findIndex(row => row == props.row);
 		if (index != -1 && index == 0) {
 			return (
 				<div>
@@ -258,7 +281,7 @@ const InvestmentsPanel = (props) => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{rows.map((row) => (
+								{listInvest.map((row) => (
 									<StyledTableRow key={row.name}>
 										<StyledTableCell component="th" scope="row">
 											{row.investor}
@@ -278,7 +301,7 @@ const InvestmentsPanel = (props) => {
 							</TableBody>
 						</Table>
 					</TableContainer> :
-
+					
 					<Grid item xs={12} >
 						<Grid item xs={3} className={classes.grid} elevation={0}>
 							<Typography className={classes.subText} variant="subtitle1">
@@ -288,7 +311,7 @@ const InvestmentsPanel = (props) => {
 						<Paper className={classes.paperBack}>
 							<Paper className={classes.paper}>
 								<Grid item xs={12} >
-									<HighlightOffIcon className={classes.buttonDelete2} ></HighlightOffIcon>
+									<HighlightOffIcon className={classes.buttonDelete2} onClick={cancelInvestment} ></HighlightOffIcon>
 									<SaveIcon className={classes.buttonEdit2} onClick={saveInvestment}></SaveIcon>
 									<form className={classes.form} noValidate autoComplete="off">
 										<TextField
@@ -324,7 +347,11 @@ const InvestmentsPanel = (props) => {
 						</Paper>
 					</Grid>
 				}
-
+				<Snackbar
+					open={open}
+					onClose={handleClose}
+					message="test Ok!"
+				/>
 				<div className={classes.footer} >
 					<Typography className={classes.text2} variant="caption">
 						Remaining amount $850.000 of $8.300.800

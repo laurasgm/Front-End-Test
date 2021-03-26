@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -37,6 +38,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 function Panel() {
     const classes = useStyles();
+     /**
+      * The idea is according to the loan that is chosen in the list of loans, 
+      * obtain the list of investments and set them in the list to later pass 
+      * them to the visualization component
+      */
+    const [investor, setInvestor] = useState([]);
+
     return (
         <div className={classes.root}>
             <Grid container spacing={0}>
@@ -45,14 +53,14 @@ function Panel() {
                         <Typography color="textSecondary" gutterBottom>
                             Select a product to syndicate
                         </Typography>
-                        <ListLoan></ListLoan>
+                        <ListLoan setInvestor={setInvestor}></ListLoan>
                     </Paper>
                 </Grid>
                 <Grid item xs={8}>
                             <Fab color="primary" className={classes.bottom} aria-label="add">
                                 <AddIcon />
                         </Fab>  
-                        <InvestmentsPanel className={classes.paper2}></InvestmentsPanel>
+                        <InvestmentsPanel investor={investor} className={classes.paper2}></InvestmentsPanel>
                 </Grid>
             </Grid>
         </div>

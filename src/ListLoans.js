@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,29 +36,56 @@ const useStyles = makeStyles((theme) => ({
         position: 'sticky'
     },
 }));
-function ListLoan() {
+
+
+const ListLoan = (props) => {
     const classes = useStyles();
-    const bull = <span className={classes.bullet}>•</span>;
+    const [listado, setListado] = useState([]);
+    const {setInvestor} = props;
+    
+    useEffect(() => {
+        axios.get('http://demo4368463.mockable.io/loads')
+        .then( result =>{
+            setListado(result.data.loads);
+            cardSelect();
+        })
+    }, []);
+
+
+    const cardSelect = (info) =>{
+        axios.get('http://demo4368463.mockable.io/investor?id=295034231455')
+        .then( result =>{
+            setInvestor(result.data);
+
+        })
+    }
+
     return (
-        <Card className={classes.root} elevation={0}>
-            <CardContent>
-                <Typography className={classes.pos} color="textPrimary">
-                    Advance
-          </Typography>
-                <Typography className={classes.title} color="textSecondary" variant="h6" gutterBottom>
-                    Producto ID
-          </Typography>
-                <Typography className={classes.pos1} color="subtitle2">
-                    03/23/2021
-            </Typography>
-                <Typography variant="subtitle1" >
-                    295034231455
-          </Typography>
-                <Typography className={classes.pos2} variant="subtitle2" >
-                    $27.000.000
-            </Typography>
-            </CardContent>
-        </Card>
+        <div>
+            {listado.map((item) => ( 
+                <Card className={classes.root} elevation={0}>
+                     <CardActionArea onClick={() => cardSelect(item)}>
+                        <CardContent>
+                            <Typography className={classes.pos} color="textPrimary">
+                                Advance
+                            </Typography>
+                            <Typography className={classes.title} color="textSecondary" variant="h6" gutterBottom>
+                                Producto ID
+                            </Typography>
+                            <Typography className={classes.pos1} color="subtitle2">
+                                {item.Date}
+                            </Typography>
+                            <Typography variant="subtitle1" >
+                                {item.IdProduct}
+                            </Typography>
+                            <Typography className={classes.pos2} variant="subtitle2" >
+                                {item.Amount}
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            ))}
+        </div>
     );
 }
 
